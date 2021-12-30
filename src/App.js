@@ -1,25 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import { PokemonDetails } from "./components/PokemonDetails";
+import { usePokedex } from "./providers/pokemonList";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import * as C from "./App.styled";
+import { PokeList } from "./components/PokeList";
 
-export default App;
+export const App = () => {
+	const [currentPokemon, setCurrentPokemon] = useState(null);
+	const [pokemonUrl, setPokemonUrl] = useState(null);
+
+	useEffect(() => {
+		if (pokemonUrl !== null) {
+			fetch(pokemonUrl)
+				.then((resp) => resp.json())
+				.then((resp) => setCurrentPokemon(resp));
+		}
+	}, [pokemonUrl]);
+
+	return (
+		<>
+			<C.Header>
+				<h1>Pokedex</h1>
+			</C.Header>
+
+			<C.Container>
+				<PokeList props={{ pokemonUrl, setPokemonUrl }} />
+				<PokemonDetails props={currentPokemon} />
+			</C.Container>
+		</>
+	);
+};
